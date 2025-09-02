@@ -8,3 +8,4 @@ Route::get('/', function () {
 });
 
 Route::get('/songs', [SongController::class, 'index']);
+Route::get('/songs/{id}', [SongController::class, 'show'])->name('songs.show');
