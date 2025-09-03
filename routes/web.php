@@ -7,5 +7,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/songs', [SongController::class, 'index']);
+// Route naar het liedjesoverzicht met filtering
+Route::get('/songs', [SongController::class, 'index'])->name('songs.index');
+
+// Route naar detailpagina van een liedje
 Route::get('/songs/{id}', [SongController::class, 'show'])->name('songs.show');
