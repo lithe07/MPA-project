@@ -1,22 +1,20 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SongController;
-use App\Http\Controllers\PlaylistController;
 
-
-// Homepagina (eventueel later aanpassen)
 Route::get('/', function () {
     return view('welcome');
 });
 
-// 🎵 Liedjes overzicht (met genre filtering)
-Route::get('/songs', [SongController::class, 'index'])->name('songs.index');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-// 🎵 Liedje detailpagina
-Route::get('/songs/{id}', [SongController::class, 'show'])->name('songs.show');
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-// 🎧 Playlist routes
-Route::get('/playlist', [PlaylistController::class, 'index'])->name('playlist.index');
-Route::get('/playlist/add/{id}', [PlaylistController::class, 'add'])->name('playlist.add');
-Route::get('/playlist/remove/{id}', [PlaylistController::class, 'remove'])->name('playlist.remove');
+require __DIR__.'/auth.php';
