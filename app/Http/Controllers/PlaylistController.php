@@ -13,8 +13,12 @@ class PlaylistController extends Controller
         $playlist = new Playlist();
         $songs = $playlist->getSongs();
         $totalDuration = $playlist->totalDuration();
+        // dd($playlist->all());
 
-        return view('playlist.index', compact('songs', 'totalDuration'));
+        return view('playlist.index', [
+            'playlist' => $songs,
+            'totalDuration' => $totalDuration,
+        ]);
     }
 
     public function add($id)

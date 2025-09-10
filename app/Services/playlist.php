@@ -16,6 +16,7 @@ class Playlist
 
     public function add($songId)
     {
+        // dd("add() methond called with song ID: " . $songId);
         $playlist = $this->all();
 
         if (!in_array($songId, $playlist)) {
@@ -39,7 +40,6 @@ class Playlist
     public function totalDuration()
     {
         return $this->getSongs()->sum(function ($song) {
-            // Zet '5:30' om naar seconden en tel op
             [$min, $sec] = explode(':', $song->duration);
             return ((int) $min * 60) + (int) $sec;
         });
