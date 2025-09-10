@@ -26,6 +26,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // 💾 Playlist opslaan (GET + POST)
+    Route::get('/playlist/save', [PlaylistController::class, 'showSaveForm'])->name('playlist.save.form');
+    Route::post('/playlist/save', [PlaylistController::class, 'save'])->name('playlist.save');
 });
 
 // 🎵 Liedjes overzicht en detail

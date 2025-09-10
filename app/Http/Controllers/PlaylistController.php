@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\Playlist;
 use App\Models\Song;
+use App\Models\SavedList;
+use Illuminate\Support\Facades\Auth;
 
 class PlaylistController extends Controller
 {
@@ -13,7 +15,6 @@ class PlaylistController extends Controller
         $playlist = new Playlist();
         $songs = $playlist->getSongs();
         $totalDuration = $playlist->totalDuration();
-        // dd($playlist->all());
 
         return view('playlist.index', [
             'playlist' => $songs,
@@ -35,5 +36,48 @@ class PlaylistController extends Controller
         $playlist->remove($id);
 
         return redirect()->back()->with('success', 'Liedje verwijderd uit playlist!');
+    }
+
+    /**
+     * GET: Toon formulier om playlist op te slaan
+     */
+    public function showSaveForm()
+    {
+        $playlist = new Playlist();
+        $songs = $playlist->getSongs();
+
+        if ($songs->isEmpty()) {
+            return redirect()->route('playlist.index')->with('error', 'Je playlist is leeg.');
+        }
+
+        return view('playlist.save', ['songs' => $songs]);
+    }
+
+    /**
+     * POST: Verwerk het opslaan van de playlist
+     */
+    public function save(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $playlist = new Playlist();
+        $songIds = $playlist->all();
+
+        if (empty($songIds)) {
+            return redirect()->route('playlist.index')->with('error', 'Playlist is leeg.');
+        }
+
+        $savedList = SavedList::create([
+            'user_id' => Auth::id(),
+            'name' => $request->name,
+        ]);
+
+        $savedList->songs()->attach($songIds);
+
+        session()->forget('playlist');
+
+        return redirect()->route('playlist.index')->with('success', 'Playlist opgeslagen als "' . $savedList->name . '"!');
     }
 }
