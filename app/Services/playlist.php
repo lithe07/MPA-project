@@ -38,10 +38,15 @@ class Playlist
     }
 
     public function totalDuration()
-    {
-        return $this->getSongs()->sum(function ($song) {
-            [$min, $sec] = explode(':', $song->duration);
-            return ((int) $min * 60) + (int) $sec;
-        });
-    }
+{
+    $totalSeconds = $this->getSongs()->sum(function ($song) {
+        [$min, $sec] = explode(':', $song->duration);
+        return ((int) $min * 60) + (int) $sec;
+    });
+
+    $minutes = floor($totalSeconds / 60);
+    $seconds = $totalSeconds % 60;
+
+    return sprintf('%02d:%02d', $minutes, $seconds);
+}
 }
