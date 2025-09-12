@@ -9,7 +9,11 @@
 
     <!-- Navbar -->
     <nav class="bg-blue-900 text-white px-6 py-3 flex justify-end gap-4">
-        <a href="{{ route('playlist.index') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Terug naar playlist</a>
+        <a href="{{ route('songs.index') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Home</a>
+        <a href="{{ route('playlist.index') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Playlist</a>
+        @auth
+            <a href="{{ route('saved.index') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Mijn Playlists</a>
+        @endauth
         <a href="{{ route('dashboard') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Dashboard</a>
     </nav>
 
@@ -21,14 +25,9 @@
 
             <div>
                 <label for="name" class="block font-medium mb-1">Naam van je playlist:</label>
-                <input 
-                    type="text" 
-                    id="name" 
-                    name="name" 
-                    value="{{ old('name', $defaultName ?? '') }}" 
-                    required
-                    class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-300"
-                    placeholder="Bijvoorbeeld: Mijn workout muziek" />
+                <input type="text" id="name" name="name" required
+                       class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-300"
+                       placeholder="Bijvoorbeeld: Mijn workout muziek" />
             </div>
 
             @if ($errors->any())

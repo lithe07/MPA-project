@@ -9,7 +9,11 @@
 
     <!-- Navbar -->
     <nav class="bg-blue-900 text-white px-6 py-3 flex justify-end gap-4">
+        <a href="{{ route('songs.index') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Home</a>
         <a href="{{ route('playlist.index') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Playlist</a>
+        @auth
+            <a href="{{ route('saved.index') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Mijn Playlists</a>
+        @endauth
         <a href="{{ route('dashboard') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Dashboard</a>
     </nav>
 
@@ -44,7 +48,6 @@
                     <p class="text-sm text-gray-600">{{ $song->artist }} • {{ $song->duration }}</p>
                     <p class="text-sm text-gray-500 italic mt-1">{{ $song->genre->name }}</p>
 
-                    <!-- ✅ Voeg toe knop met POST -->
                     <form action="{{ route('playlist.add', $song->id) }}" method="POST" class="mt-4 w-full">
                         @csrf
                         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full">

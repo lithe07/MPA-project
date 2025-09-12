@@ -17,9 +17,18 @@ class PlaylistController extends Controller
         $songs = $playlist->getSongs();
         $totalDuration = $playlist->totalDuration();
 
+        // ✅ Opgeslagen playlists ophalen voor ingelogde gebruiker
+        $savedLists = null;
+        if (Auth::check()) {
+            $savedLists = SavedList::with('songs.genre')
+                ->where('user_id', Auth::id())
+                ->get();
+        }
+
         return view('playlist.index', [
             'playlist' => $songs,
             'totalDuration' => $totalDuration,
+            'savedLists' => $savedLists, // ✅ meegeven aan view
         ]);
     }
 

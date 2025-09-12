@@ -41,6 +41,13 @@ Route::middleware('auth')->group(function () {
 
     // 📁 Opgeslagen playlists bekijken
     Route::get('/mijn-playlists', [SavedListController::class, 'index'])->name('saved.index');
+
+    // ✏️ Playlist bewerken (naam wijzigen)
+    Route::get('/mijn-playlists/{id}/edit', [SavedListController::class, 'edit'])->name('saved.edit');
+    Route::put('/mijn-playlists/{id}', [SavedListController::class, 'update'])->name('saved.update');
+
+    // ❌ Playlist verwijderen
+    Route::delete('/mijn-playlists/{id}', [SavedListController::class, 'destroy'])->name('saved.destroy');
 });
 
 // 🎵 Liedjes overzicht en detail

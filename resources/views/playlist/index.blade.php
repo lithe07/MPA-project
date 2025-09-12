@@ -10,6 +10,10 @@
     <!-- Navbar -->
     <nav class="bg-blue-900 text-white px-6 py-3 flex justify-end gap-4">
         <a href="{{ route('songs.index') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Home</a>
+        <a href="{{ route('playlist.index') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Playlist</a>
+        @auth
+            <a href="{{ route('saved.index') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Mijn Playlists</a>
+        @endauth
         <a href="{{ route('dashboard') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Dashboard</a>
     </nav>
 
@@ -29,7 +33,6 @@
                         <p class="text-gray-600">{{ $song['artist'] }} • {{ $song['duration'] }}</p>
                         <p class="text-sm mt-1 text-gray-500 italic">{{ $song['genre']['name'] }}</p>
 
-                        <!-- ✅ Verwijderknop via POST -->
                         <form action="{{ route('playlist.remove', $song['id']) }}" method="POST" class="mt-3">
                             @csrf
                             <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 w-full">
@@ -40,12 +43,10 @@
                 @endforeach
             </ul>
 
-            <!-- Totale duur -->
             <div class="mt-8 p-4 border-t">
                 <p class="text-lg font-semibold">Totale duur: {{ $totalDuration }}</p>
             </div>
 
-            <!-- ✅ Opslaan formulier -->
             <div class="mt-10 p-4 bg-white rounded shadow border max-w-md mx-auto">
                 @auth
                     <h2 class="text-xl font-semibold mb-4">🎵 Playlist opslaan</h2>
