@@ -45,9 +45,9 @@
                 <p class="text-lg font-semibold">Totale duur: {{ $totalDuration }}</p>
             </div>
 
-            <!-- ✅ Opslaan formulier (alleen zichtbaar als ingelogd) -->
-            @auth
-                <div class="mt-8 p-4 bg-white rounded shadow border max-w-md mx-auto">
+            <!-- ✅ Opslaan formulier -->
+            <div class="mt-10 p-4 bg-white rounded shadow border max-w-md mx-auto">
+                @auth
                     <h2 class="text-xl font-semibold mb-4">🎵 Playlist opslaan</h2>
                     <form action="{{ route('playlist.save') }}" method="POST">
                         @csrf
@@ -55,11 +55,22 @@
                         <input type="text" name="name" id="name" required class="w-full px-4 py-2 border rounded mb-4" placeholder="Bijv. Mijn favoriete nummers">
 
                         <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full">
-                            Opslaan
+                            ✅ Opslaan
                         </button>
                     </form>
-                </div>
-            @endauth
+                @endauth
+
+                @guest
+                    <h2 class="text-xl font-semibold mb-4">🎵 Playlist opslaan</h2>
+                    <p class="text-gray-600 mb-4">Om je playlist op te slaan, log eerst in of maak een account aan.</p>
+                    <form method="GET" action="{{ route('login') }}">
+                        <input type="hidden" name="redirect_to_save" value="1">
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full">
+                            🔐 Inloggen om playlist op te slaan
+                        </button>
+                    </form>
+                @endguest
+            </div>
         @endif
     </main>
 </body>

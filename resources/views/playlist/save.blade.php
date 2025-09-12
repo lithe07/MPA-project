@@ -21,9 +21,14 @@
 
             <div>
                 <label for="name" class="block font-medium mb-1">Naam van je playlist:</label>
-                <input type="text" id="name" name="name" required
-                       class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-300"
-                       placeholder="Bijvoorbeeld: Mijn workout muziek" />
+                <input 
+                    type="text" 
+                    id="name" 
+                    name="name" 
+                    value="{{ old('name', $defaultName ?? '') }}" 
+                    required
+                    class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-300"
+                    placeholder="Bijvoorbeeld: Mijn workout muziek" />
             </div>
 
             @if ($errors->any())

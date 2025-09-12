@@ -7,6 +7,7 @@ use App\Services\Playlist;
 use App\Models\Song;
 use App\Models\SavedList;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class PlaylistController extends Controller
 {
@@ -38,36 +39,31 @@ class PlaylistController extends Controller
         return redirect()->back()->with('success', 'Liedje verwijderd uit playlist!');
     }
 
-    /**
-     * GET: Toon formulier om playlist op te slaan
-     */
     public function showSaveForm()
     {
-        $playlist = new Playlist();
-        $songs = $playlist->getSongs();
-
-        if ($songs->isEmpty()) {
-            return redirect()->route('playlist.index')->with('error', 'Je playlist is leeg.');
-        }
-
-        return view('playlist.save', ['songs' => $songs]);
+        $defaultName = Session::get('pending_playlist_name', '');
+        return view('playlist.save', ['defaultName' => $defaultName]);
     }
 
-    /**
-     * POST: Verwerk het opslaan van de playlist
-     */
     public function save(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
-
         $playlist = new Playlist();
         $songIds = $playlist->all();
 
         if (empty($songIds)) {
             return redirect()->route('playlist.index')->with('error', 'Playlist is leeg.');
         }
+
+        // ✅ Bezoeker: sla naam tijdelijk op in session & stuur naar login
+        if (!Auth::check()) {
+            Session::put('pending_playlist_name', $request->name);
+            return redirect()->route('login')->with('info', 'Log in om je playlist op te slaan.');
+        }
+
+        // ✅ Ingelogde gebruiker: opslaan in database
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
 
         $savedList = SavedList::create([
             'user_id' => Auth::id(),
@@ -76,8 +72,33 @@ class PlaylistController extends Controller
 
         $savedList->songs()->attach($songIds);
 
+        // Playlist en tijdelijke naam opruimen
         session()->forget('playlist');
+        session()->forget('pending_playlist_name');
 
         return redirect()->route('playlist.index')->with('success', 'Playlist opgeslagen als "' . $savedList->name . '"!');
+    }
+
+    // ✅ Automatisch opslaan NA login
+    public function autoSave()
+    {
+        $songIds = session('playlist', []);
+        $name = session('pending_playlist_name');
+
+        if (empty($songIds) || !$name) {
+            return redirect()->route('playlist.index')->with('error', 'Geen playlist om op te slaan.');
+        }
+
+        $savedList = SavedList::create([
+            'user_id' => Auth::id(),
+            'name' => $name,
+        ]);
+
+        $savedList->songs()->attach($songIds);
+
+        session()->forget('playlist');
+        session()->forget('pending_playlist_name');
+
+        return redirect()->route('saved.index')->with('success', 'Je playlist "' . $name . '" is succesvol opgeslagen!');
     }
 }
