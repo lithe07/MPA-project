@@ -12,7 +12,6 @@
         <a href="{{ route('songs.index') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Home</a>
         <a href="{{ route('playlist.index') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Playlist</a>
         <a href="{{ route('dashboard') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Dashboard</a>
-        <a href="{{ route('saved.index') }}" class="bg-white text-blue-900 px-4 py-2 rounded hover:bg-gray-100 font-medium">Mijn Playlists</a>
     </nav>
 
     <main class="p-8 max-w-4xl mx-auto">
@@ -23,12 +22,10 @@
         @else
             <ul class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 @foreach($savedLists as $list)
-                    <li class="border rounded bg-gray-50 p-4 shadow flex flex-col justify-between">
-                        <div>
-                            <h2 class="text-xl font-semibold mb-2">{{ $list->name }}</h2>
-                            <p class="text-sm text-gray-500 mb-1">Aangemaakt op: {{ $list->created_at->format('d-m-Y H:i') }}</p>
-                            <p class="text-sm text-gray-500 mb-4">{{ $list->songs->count() }} liedjes</p>
-                        </div>
+                    <li class="border rounded bg-gray-50 p-4 shadow">
+                        <h2 class="text-xl font-semibold mb-2">{{ $list->name }}</h2>
+                        <p class="text-sm text-gray-500 mb-1">Aangemaakt op: {{ $list->created_at->format('d-m-Y H:i') }}</p>
+                        <p class="text-sm text-gray-500 mb-4">{{ $list->songs->count() }} liedjes</p>
 
                         <div class="flex gap-2">
                             <!-- ✏️ Bewerken knop -->

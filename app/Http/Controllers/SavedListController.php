@@ -18,6 +18,23 @@ class SavedListController extends Controller
         return view('saved.index', compact('savedLists'));
     }
 
+    // 🔎 Detailpagina van één opgeslagen playlist
+    public function show(SavedList $savedList)
+    {
+        // Controleer of de playlist van de huidige gebruiker is
+        if ($savedList->user_id !== Auth::id()) {
+            abort(403, 'Je hebt geen toegang tot deze playlist.');
+        }
+
+        // Liedjes van deze playlist ophalen
+        $songs = $savedList->songs()->with('genre')->get();
+
+        return view('saved.show', [
+            'playlist' => $savedList,
+            'songs' => $songs,
+        ]);
+    }
+
     // ✏️ Toon het formulier om een playlist te bewerken
     public function edit(SavedList $savedList)
     {
@@ -46,5 +63,19 @@ class SavedListController extends Controller
         $playlist->delete();
 
         return redirect()->route('saved.index')->with('success', 'Playlist succesvol verwijderd!');
+    }
+
+    // ❌ Liedje verwijderen uit een playlist
+    public function removeSong($playlistId, $songId)
+    {
+        // Zorg dat de playlist van de ingelogde gebruiker is
+        $playlist = SavedList::where('id', $playlistId)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        // Koppel de song los van de playlist (pivot rij weg)
+        $playlist->songs()->detach($songId);
+
+        return back()->with('success', 'Liedje verwijderd uit "' . $playlist->name . '".');
     }
 }

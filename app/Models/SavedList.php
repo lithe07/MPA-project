@@ -11,13 +11,16 @@ class SavedList extends Model
 
     protected $fillable = ['name', 'user_id'];
 
+    // 🔗 Relatie: een playlist bevat meerdere liedjes
+    public function songs()
+    {
+        return $this->belongsToMany(Song::class, 'saved_list_song')
+                    ->withTimestamps();
+    }
+
+    // 🔗 Relatie: een playlist hoort bij een gebruiker
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function songs()
-    {
-        return $this->belongsToMany(Song::class);
     }
 }
