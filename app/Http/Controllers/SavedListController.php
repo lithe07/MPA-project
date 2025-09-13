@@ -14,19 +14,41 @@ class SavedListController extends Controller
         $savedLists = SavedList::with('songs.genre')
             ->where('user_id', Auth::id())
             ->get();
-        
+
         return view('saved.index', compact('savedLists'));
+    }
+
+    // 🔎 Detailpagina van één opgeslagen playlist
+    public function show(SavedList $savedList)
+    {
+        // Controleer of de playlist van de huidige gebruiker is
+        if ($savedList->user_id !== Auth::id()) {
+            abort(403, 'Je hebt geen toegang tot deze playlist.');
+        }
+
+        // Songs + genre ophalen
+        $savedList->load('songs.genre');
+
+        return view('saved.show', compact('savedList'));
     }
 
     // ✏️ Toon het formulier om een playlist te bewerken
     public function edit(SavedList $savedList)
     {
+        if ($savedList->user_id !== Auth::id()) {
+            abort(403, 'Je hebt geen toegang om deze playlist te bewerken.');
+        }
+
         return view('saved.edit', compact('savedList'));
     }
 
     // ✅ Update de naam van de playlist
     public function update(Request $request, SavedList $savedList)
     {
+        if ($savedList->user_id !== Auth::id()) {
+            abort(403, 'Je hebt geen toegang om deze playlist te bewerken.');
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
@@ -37,14 +59,26 @@ class SavedListController extends Controller
     }
 
     // ❌ Playlist verwijderen
-    public function destroy($id)
+    public function destroy(SavedList $savedList)
     {
-        $playlist = SavedList::where('id', $id)
-            ->where('user_id', Auth::id())
-            ->firstOrFail();
+        if ($savedList->user_id !== Auth::id()) {
+            abort(403, 'Je hebt geen toegang om deze playlist te verwijderen.');
+        }
 
-        $playlist->delete();
+        $savedList->delete();
 
         return redirect()->route('saved.index')->with('success', 'Playlist succesvol verwijderd!');
+    }
+
+    // ❌ Liedje verwijderen uit een playlist
+    public function removeSong(SavedList $savedList, $songId)
+    {
+        if ($savedList->user_id !== Auth::id()) {
+            abort(403, 'Je hebt geen toegang om deze playlist te wijzigen.');
+        }
+
+        $savedList->songs()->detach($songId);
+
+        return back()->with('success', 'Liedje verwijderd uit "' . $savedList->name . '".');
     }
 }
