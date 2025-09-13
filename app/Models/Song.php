@@ -11,9 +11,16 @@ class Song extends Model
 
     protected $fillable = ['name', 'artist', 'duration', 'genre_id'];
 
-    public function genre()
-{
-    return $this->belongsTo(Genre::class);
-}
-}
+    // 🔗 Relatie: een song kan in meerdere playlists zitten
+    public function savedLists()
+    {
+        return $this->belongsToMany(SavedList::class, 'saved_list_song')
+                    ->withTimestamps();
+    }
 
+    // 🔗 Relatie: een song hoort bij een genre
+    public function genre()
+    {
+        return $this->belongsTo(Genre::class);
+    }
+}
